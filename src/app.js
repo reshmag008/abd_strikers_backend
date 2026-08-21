@@ -16,7 +16,9 @@ const app = express();
 const ALLOWED_ORIGINS =
   "*";
 
-const allowedOrigins = ALLOWED_ORIGINS.split(",");
+const allowedOrigins = [
+  "http://localhost:8080","http://localhost:8081","https://kizhakenni-pl-fe-204746249106.europe-west1.run.app/"
+];
 
 app.use(
   cors({
@@ -72,30 +74,14 @@ io.on("connection", (socket) => {
   socket.on("join-room", async (roomId) => {
     socket.join(roomId);
 
-    console.log(`${socket.id} joined room ${roomId}`);
+    const selectedPlayer = await models.players.findOne({
+      where: { profile_link: "1" },
+      order: [["updatedAt", "DESC"]],
+    });
 
-    await sendCurrentAuctionState(socket, roomId);
-  });
-
-  socket.on("disconnect", (reason) => {
-    console.log("Disconnected:", socket.id, reason);
+    io.to(roomId).emit("current_player", JSON.stringify(selectedPlayer));
   });
 });
-
-async function sendCurrentAuctionState(socket, roomId) {
-  const selectedPlayer = await models.players.findOne({
-    where: {
-      profile_link: "1",
-    },
-    order: [["updatedAt", "DESC"]],
-  });
-
-  socket.emit(
-    "current_player",
-    JSON.stringify(selectedPlayer)
-  );
-}
-
 
 /* =======================
    START SERVER

@@ -95,7 +95,7 @@ async function getSoldPlayers(){
             players.forEach((element,index)=>{
                 // players[index]['profile_image'] = profilePromises[index].value;
                 // console.log("teamPromises[index].value== ", teamPromises[index].value);
-                players[index]['team_id'] = teamPromises[index].value.team_name
+                players[index]['team_id'] = teamPromises[index]?.value?.team_name
             })
 
             let response = {
