@@ -72,14 +72,30 @@ io.on("connection", (socket) => {
   socket.on("join-room", async (roomId) => {
     socket.join(roomId);
 
-    const selectedPlayer = await models.players.findOne({
-      where: { profile_link: "1" },
-      order: [["updatedAt", "DESC"]],
-    });
+    console.log(`${socket.id} joined room ${roomId}`);
 
-    io.to(roomId).emit("current_player", JSON.stringify(selectedPlayer));
+    await sendCurrentAuctionState(socket, roomId);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log("Disconnected:", socket.id, reason);
   });
 });
+
+async function sendCurrentAuctionState(socket, roomId) {
+  const selectedPlayer = await models.players.findOne({
+    where: {
+      profile_link: "1",
+    },
+    order: [["updatedAt", "DESC"]],
+  });
+
+  socket.emit(
+    "current_player",
+    JSON.stringify(selectedPlayer)
+  );
+}
+
 
 /* =======================
    START SERVER

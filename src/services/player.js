@@ -177,7 +177,7 @@ async function getNonBidPlayers(id) {
             if(id){
                 players = await models.players.findAll({
                     where: {
-                      bid_amount: null,
+                      bid_amount: 0,
                       id : id,
                       un_sold : false
                     }
@@ -185,7 +185,7 @@ async function getNonBidPlayers(id) {
             }else{
                 players = await models.players.findAll({
                     where: {
-                      bid_amount: null,
+                      bid_amount: 0,
                       un_sold : false
                     }
                   });
